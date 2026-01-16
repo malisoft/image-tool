@@ -31,9 +31,6 @@ const handleToggleCrop = () => {
 };
 
 const handleReset = () => {
-  // Simple reset: reload the file logic or just reload page?
-  // Ideally reset cropper.
-  // We can just nullify and re-set, but easier to just clear
   currentFile.value = null;
   isCropMode.value = false;
 };
@@ -52,106 +49,46 @@ const handleDownload = () => {
 </script>
 
 <template>
-  <div class="app-layout">
-    <header>
-      <div class="logo">
-        <i class="ph ph-image"></i>
-        <span>ImageTool</span>
-      </div>
-      <button v-if="currentFile" @click="handleReset" class="btn-text">
-        <i class="ph ph-x"></i> Close
-      </button>
-    </header>
-
-    <main>
-      <Transition name="fade" mode="out-in">
-        <ImageUploader 
-          v-if="!currentFile" 
-          @file-selected="handleFileSelected" 
-        />
-        <div v-else class="editor-workspace">
-          <ImageEditor 
-            ref="editorRef" 
-            :file="currentFile" 
-          />
-          <Controls 
-            :is-crop-mode="isCropMode"
-            @rotate="handleRotate"
-            @flip="handleFlip"
-            @zoom="handleZoom"
-            @toggle-crop="handleToggleCrop"
-            @reset="handleReset"
-            @download="handleDownload"
-          />
+  <div class="min-h-screen bg-neutral-950 flex items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-[#1E1E24] border border-amber-500 rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.3)] overflow-hidden">
+      <header class="flex justify-between items-center p-6 border-b border-amber-500/20">
+        <div class="flex items-center gap-2 text-amber-500">
+          <i class="ph ph-image text-2xl"></i>
+          <span class="text-xl font-bold">ImageTool</span>
         </div>
-      </Transition>
-    </main>
+        <button v-if="currentFile" @click="handleReset" class="flex items-center gap-1 text-gray-400 hover:text-amber-500 transition-colors text-sm bg-transparent border-none cursor-pointer">
+          <i class="ph ph-x"></i> Close
+        </button>
+      </header>
+
+      <main class="p-6 flex-1 flex flex-col relative">
+        <Transition name="fade" mode="out-in">
+          <ImageUploader 
+            v-if="!currentFile" 
+            @file-selected="handleFileSelected" 
+          />
+          <div v-else class="w-full flex flex-col items-center gap-6">
+            <ImageEditor 
+              ref="editorRef" 
+              :file="currentFile" 
+            />
+            <Controls 
+              :is-crop-mode="isCropMode"
+              @rotate="handleRotate"
+              @flip="handleFlip"
+              @zoom="handleZoom"
+              @toggle-crop="handleToggleCrop"
+              @reset="handleReset"
+              @download="handleDownload"
+            />
+          </div>
+        </Transition>
+      </main>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.app-layout {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 0 10px;
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text-primary);
-}
-
-.logo i {
-  color: var(--accent-color);
-  font-size: 32px;
-}
-
-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  overflow: hidden;
-}
-
-.editor-workspace {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
-}
-
-.btn-text {
-  background: none;
-  border: none;
-  color: var(--text-secondary);
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.btn-text:hover {
-  color: var(--text-primary);
-}
-
-/* Transitions */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
